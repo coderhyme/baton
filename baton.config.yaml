@@ -1,0 +1,8 @@
+# baton.config.yaml
+verbose: true
+
+# Available agents for orchestration
+agents:
+  - claude
+  - codex
+  - gemini

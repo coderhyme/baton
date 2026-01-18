@@ -1,0 +1,34 @@
+{
+  "name": "baton",
+  "version": "0.0.1",
+  "description": "Conduct your AI orchestra - Multi-agent orchestration CLI",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "start:verbose": "tsx src/index.ts -v",
+    "dev": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.27",
+    "@langchain/langgraph": "^0.2.42",
+    "node-pty": "^1.1.0",
+    "yaml": "^2.8.2",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.25.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^22.10.7",
+    "eslint": "^9.39.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.53.0"
+  }
+}
