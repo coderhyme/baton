@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { ManagerAgent, ClaudeAgent, CodexAgent, GeminiAgent } from "./agents/index.js";
@@ -111,13 +111,23 @@ export async function orchestrate(userPrompt: string): Promise<string> {
   return result.finalAnswer;
 }
 
-function parseArgs(args: string[]): { prompt: string; verbose: boolean } {
+interface ParsedArgs {
+  prompt: string;
+  verbose: boolean;
+  file: string | null;
+}
+
+function parseArgs(args: string[]): ParsedArgs {
   let verbose = false;
+  let file: string | null = null;
   const promptParts: string[] = [];
 
-  for (const arg of args) {
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
     if (arg === "-v" || arg === "--verbose") {
       verbose = true;
+    } else if (arg === "-f" || arg === "--file") {
+      file = args[++i] ?? null;
     } else {
       promptParts.push(arg);
     }
@@ -126,6 +136,7 @@ function parseArgs(args: string[]): { prompt: string; verbose: boolean } {
   return {
     prompt: promptParts.join(" "),
     verbose,
+    file,
   };
 }
 
@@ -133,17 +144,37 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log("Usage: npx tsx src/index.ts [-v|--verbose] \"<your prompt>\"");
+    console.log("Usage: npx tsx src/index.ts [-v|--verbose] [-f|--file <path>] \"<your prompt>\"");
     console.log("");
     console.log("Options:");
-    console.log("  -v, --verbose    Show realtime agent output");
+    console.log("  -v, --verbose       Show realtime agent output");
+    console.log("  -f, --file <path>   Read prompt from file");
     console.log("");
-    console.log("Example: npx tsx src/index.ts -v \"Explain the concept of recursion\"");
+    console.log("Examples:");
+    console.log("  npx tsx src/index.ts -v \"Explain the concept of recursion\"");
+    console.log("  npx tsx src/index.ts -f prompt.txt");
     process.exit(1);
   }
 
-  const { prompt, verbose } = parseArgs(args);
+  const { prompt: argPrompt, verbose, file } = parseArgs(args);
   initConfig({ ...(verbose ? { verbose } : {}) });
+
+  if (file && argPrompt) {
+    console.error("Error: Cannot use both --file and prompt argument");
+    process.exit(1);
+  }
+
+  let prompt: string;
+  if (file) {
+    try {
+      prompt = (await readFile(file, "utf-8")).trim();
+    } catch (error) {
+      console.error(`Error: Failed to read file "${file}":`, error);
+      process.exit(1);
+    }
+  } else {
+    prompt = argPrompt;
+  }
 
   if (!prompt) {
     console.error("Error: No prompt provided");

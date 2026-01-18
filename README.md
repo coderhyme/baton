@@ -126,6 +126,12 @@ Execute a task directly from the command line:
 npm run start -- "Write a Python function that fetches weather data from an API and saves it to CSV"
 ```
 
+Or read the prompt from a file:
+
+```bash
+npm run start -- -f prompt.txt
+```
+
 The Manager determines which agents to use based on your config and the task requirements.
 
 ### Verbose Mode
@@ -141,7 +147,10 @@ npm run start:verbose -- "Refactor src/index.ts to improve error handling"
 | Argument | Description |
 |----------|-------------|
 | `-v, --verbose` | Show real-time agent output |
+| `-f, --file <path>` | Read prompt from file |
 | `[prompt]` | The task description for the Manager to plan and execute |
+
+**Note:** You cannot use both `-f` and a prompt argument at the same time.
 
 **Available npm Scripts:**
 
