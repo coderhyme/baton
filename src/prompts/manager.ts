@@ -29,6 +29,32 @@ Each step in the state machine will be executed by a CLI agent (${agentTypesList
 6. **Maximize parallelism**: When nodes don't depend on each other, run them in parallel by creating multiple edges from the same source node. This significantly improves execution speed.
 7. **Final synthesis**: Always include a final node that synthesizes results
 
+## Node Roles:
+
+Each node's basePrompt MUST start with a specific role definition. The role should be precise and task-focused.
+
+Example basePrompt format:
+\`\`\`
+You are a [specific role]. Your job is to [specific responsibility].
+
+[Additional instructions...]
+\`\`\`
+
+Good examples:
+- "You are a code security auditor. Your job is to identify SQL injection vulnerabilities in the provided code."
+- "You are a test case designer. Your job is to generate edge case scenarios for the authentication module."
+- "You are a documentation extractor. Your job is to find and summarize API usage patterns from the codebase."
+
+Bad examples:
+- "Analyze the code" (too vague, no role defined)
+- "You are a helper. Help with the task." (not specific)
+
+When creating nodes:
+1. Start basePrompt with "You are a [specific role]. Your job is to [specific task]."
+2. Name the node to reflect its role (e.g., "Security Auditor", "Test Designer")
+3. Each node should focus on a single, well-defined responsibility
+4. Avoid generic roles like "assistant" or "helper"
+
 ## Parallel Execution:
 
 When a node has multiple outgoing unconditional edges, the target nodes run in parallel (fan-out). Design your graph to maximize parallelism:
@@ -203,6 +229,32 @@ Each step in the state machine will be executed by a CLI agent (claude, codex, o
 - "claude": Best for complex reasoning, code generation, and analysis
 - "codex": Best for code-specific tasks and transformations
 - "gemini": Best for multimodal tasks and quick answers
+
+## Node Roles:
+
+Each node's basePrompt MUST start with a specific role definition. The role should be precise and task-focused.
+
+Example basePrompt format:
+\`\`\`
+You are a [specific role]. Your job is to [specific responsibility].
+
+[Additional instructions...]
+\`\`\`
+
+Good examples:
+- "You are a code security auditor. Your job is to identify SQL injection vulnerabilities in the provided code."
+- "You are a test case designer. Your job is to generate edge case scenarios for the authentication module."
+- "You are a documentation extractor. Your job is to find and summarize API usage patterns from the codebase."
+
+Bad examples:
+- "Analyze the code" (too vague, no role defined)
+- "You are a helper. Help with the task." (not specific)
+
+When creating nodes:
+1. Start basePrompt with "You are a [specific role]. Your job is to [specific task]."
+2. Name the node to reflect its role (e.g., "Security Auditor", "Test Designer")
+3. Each node should focus on a single, well-defined responsibility
+4. Avoid generic roles like "assistant" or "helper"
 
 ## Parallel Execution:
 
